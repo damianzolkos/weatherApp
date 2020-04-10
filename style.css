@@ -2,13 +2,71 @@ html,
 body {
     margin: 0;
     padding: 0;
+    min-width: 100%;
+    font-family: 'Roboto', sans-serif;
+    background: linear-gradient(45deg, #ff6f00, #ffca28) !important;
+}
+
+#wrapper {
+    position: relative;
+    display: block;
+    min-width: 100%;
+}
+
+#header {
+    position: relative;
+    min-height: 0px;
+    padding-top: 30px;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-bottom: 0px;
+    max-width: 95%;
+    margin: 0 auto;
+}
+
+#top_panel {
+    color: #fff;
+    font-size: 16pt;
+}
+
+#location {
+    font-weight: 400;
+}
+
+#info {
+    float: right;
+}
+
+#weather_info {
+    display: block;
+}
+
+.temp_h1 {
+    color: #fff;
+    font-weight: 200;
+    font-size: 42pt;
+}
+
+#header img {
+    bottom: 0;
+    float: right;
+    width: 120px;
+    margin-top: -15px;
+    margin-right: 0px;
 }
 
 .box {
     position: relative;
-    padding: 0px;
+    display: block;
+    margin: 20px auto;
     border-radius: 1px;
-    display: inline-block;
     background-color: #fff;
     box-shadow: 0px 0px 2px #111;
+    max-width: calc(95% - 30px);
+    min-height: 100px;
+    padding: 0px 15px;
+}
+
+.box_title {
+    padding: 15px 0px;
 }

@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <link rel="shortcut icon" href="icon.png" />
 
-  <meta name="theme-color" content="rgb(45, 0, 160)" />
+  <meta name="theme-color" content="#ffca28" />
   <meta name="mobile-web-app-capable" content="yes" />
 
   <!-- FONTS -->
@@ -17,6 +17,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
+  <script src="chart-js/Chart.js"></script>
   <script src="jquery.min.js"></script>
   <script src="script.js" type="text/javascript"></script>
   <script src="getTime.js" type="text/javascript"></script>
@@ -26,17 +27,111 @@
 </head>
 
 <body>
-<div id="wrapper">
+  <div id="wrapper">
 
-    
-<div id="header">
-</div>
+    <div id="header">
+      <div id="top_panel">
+        <span id="location">Przybówka</span>
+        <span id="info" class="material-icons">info</span>
+      </div>
+      <div id="weather_info">
+        <img src="img/cloud.png">
+        <p class="temp_h1">21&deg;C</p>
+      </div>
+    </div>
 
-<div class="box">
-</div>
+    <div class="box">
+      <p class="box_title">Daily forecast</p>
+      <canvas id="daily" width="10" height="4"></canvas>
+    </div>
+
+    <div class="box">
+      <p class="box_title">Hourly forecast</p>
+      <canvas id="hourly" width="10" height="4"></canvas>
+    </div>
+
+    <div id="footer"></div>
+  </div>
 
 
-</div>
+  <script>
+    let ctx1 = document.getElementById('daily');
+    let ctx2 = document.getElementById('hourly');
+  
+    let data = {
+      datasets: [{
+          backgroundColor: '#ffca28',
+          borderColor: '#ffca28',
+          borderWidth: 4,
+          fill: false,
+          pointRadius: 2,
+          pointRadiusHover: 1,
+          pointBorderWidth: 2
+        },
+        {
+          backgroundColor: 'rgb(51, 35, 99)',
+          borderColor: 'rgb(51, 35, 99)',
+          borderWidth: 4,
+          fill: false,
+          pointRadius: 2,
+          pointRadiusHover: 1,
+          pointBorderWidth: 2
+        }
+      ]
+    };
+  
+    let options = {
+      responsive: true,
+      legend: {
+        display: false
+      },
+      tooltips: {
+        mode: 'index',
+        intersect: true,
+      },
+      scales: {
+        xAxes: [{
+          display: true,
+          scaleLabel: {
+            display: false,
+            labelString: ''
+          }
+        }],
+        yAxes: [{
+          ticks: {
+                    callback: function (value, index, values) {
+                        return value+"°"
+                    }
+                },
+          display: true,
+          scaleLabel: {
+            display: false
+          }
+        }]
+      }
+    };
+  
+    function renderChart() {
+      data.labels = ['today', 'sunday', 'monday', 'tuesday', 'friday'];
+      data.datasets[0].data = [14, 15, 12, 8, 10];
+      data.datasets[1].data = [10, 11, 9, 7, 9];
+  
+      let daily = new Chart(ctx1, {
+        type: 'line',
+        data: data,
+        options: options
+      });
+
+      let hourly = new Chart(ctx2, {
+        type: 'line',
+        data: data,
+        options: options
+      });
+    }
+    renderChart();
+  </script>
+
 
 </body>
+
 </html>
