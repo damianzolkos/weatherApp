@@ -38,6 +38,7 @@
       <div id="weather_info">
         <img src="img/cloud.png">
         <p class="temp_h1"><span id="nowTemp"></span>&deg;C</p>
+        <p class="temp_h2"><span id="nowWeather"></span>, feels like <span id="nowFeelsLike"></span>&deg;C</p>
       </div>
     </div>
 
@@ -112,6 +113,8 @@
         let rawdata = await getData("https://api.openweathermap.org/data/2.5/weather?q=Rzesz%C3%B3w&appid=b15be82a62ee5afa91f155ff6c086374");
           console.log(rawdata);
           document.getElementById("nowTemp").innerHTML = Math.round(rawdata.main.temp-273.15);
+          document.getElementById("nowFeelsLike").innerHTML = Math.round(rawdata.main.feels_like-273.15);
+          document.getElementById("nowWeather").innerHTML = rawdata.weather[0].main;
           document.getElementById("nowWind").innerHTML = rawdata.wind.speed;
           document.getElementById("nowHum").innerHTML = rawdata.main.humidity;
           document.getElementById("nowPress").innerHTML = rawdata.main.pressure;
