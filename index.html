@@ -32,12 +32,12 @@
 
     <div id="header">
       <div id="top_panel">
-        <span id="location">Przybówka</span>
+        <span id="location">Rzeszów</span>
         <span id="info" class="material-icons">info</span>
       </div>
       <div id="weather_info">
         <img src="img/cloud.png">
-        <p class="temp_h1">21&deg;C</p>
+        <p class="temp_h1"><span id="nowTemp"></span>&deg;C</p>
       </div>
     </div>
 
@@ -76,14 +76,12 @@
       <canvas id="gauge1"></canvas>
     </div>
 
-    
+
     <div class="box">
       <p class="box_title">Details</p>
-      Wind: <br>
-      Humidity: <br>
-      UV Index: <br>
-      Preassure: <br>
-      Visibility: <br>
+      Wind: <span id="nowWind"></span> m/s<br>
+      Humidity: <span id="nowHum"></span> %<br>
+      Preassure: <span id="nowPress"></span> hPa<br>
       <br>
     </div>
 
@@ -92,105 +90,133 @@
 
 
   <script>
-    let ctx1 = document.getElementById('daily');
-    let ctx2 = document.getElementById('hourly');
-
-    let data = {
-      datasets: [{
-          backgroundColor: '#ffca28',
-          borderColor: '#ffca28',
-          borderWidth: 4,
-          fill: false,
-          pointRadius: 2,
-          pointRadiusHover: 1,
-          pointBorderWidth: 2
-        },
-        {
-          backgroundColor: 'rgb(51, 35, 99)',
-          borderColor: 'rgb(51, 35, 99)',
-          borderWidth: 4,
-          fill: false,
-          pointRadius: 2,
-          pointRadiusHover: 1,
-          pointBorderWidth: 2
-        }
-      ]
-    };
-
-    let options = {
-      responsive: true,
-      legend: {
-        display: false
-      },
-      tooltips: {
-        mode: 'index',
-        intersect: true,
-      },
-      scales: {
-        xAxes: [{
-          display: true,
-          scaleLabel: {
-            display: false,
-            labelString: ''
-          }
-        }],
-        yAxes: [{
-          ticks: {
-            callback: function (value, index, values) {
-              return value + "°"
+    async function getData(url) {
+      const data = await fetch(url)
+        .then(
+          function (response) {
+            if (response.status !== 200) {
+              console.log('There was a problem. Status Code: ' +
+                response.status);
+              return;
             }
-          },
-          display: true,
-          scaleLabel: {
-            display: false
+            return response.json();
           }
-        }]
-      }
-    };
-
-    function renderChart() {
-      data.labels = ['today', 'sunday', 'monday', 'tuesday', 'friday'];
-      data.datasets[0].data = [14, 15, 12, 8, 10];
-      data.datasets[1].data = [10, 11, 9, 7, 9];
-
-      let daily = new Chart(ctx1, {
-        type: 'line',
-        data: data,
-        options: options
-      });
-
-      let hourly = new Chart(ctx2, {
-        type: 'line',
-        data: data,
-        options: options
-      });
+        )
+        .catch(function (err) {
+          console.log('Fetch Error :-S', err);
+        });
+      return data;
     }
-    renderChart();
 
-    var opts = {
-      angle: 0, // The span of the gauge arc
-      lineWidth: 0.05, // The line thickness
-      radiusScale: 1, // Relative radius
-      pointer: {
-        length: 0, // // Relative to gauge radius
-        strokeWidth: 0, // The thickness
-        color: '#000000' // Fill color
-      },
-      limitMax: false, // If false, max value increases automatically if value > maxValue
-      limitMin: false, // If true, the min value of the gauge will be fixed
-      colorStart: '#6FADCF', // Colors
-      colorStop: '#ffca28', // just experiment with them
-      strokeColor: '#E0E0E0', // to see which ones work best for you
-      generateGradient: true,
-      highDpiSupport: true, // High resolution support
+    async function main() {
+        let rawdata = await getData("https://api.openweathermap.org/data/2.5/weather?q=Rzesz%C3%B3w&appid=b15be82a62ee5afa91f155ff6c086374");
+          console.log(rawdata);
+          document.getElementById("nowTemp").innerHTML = Math.round(rawdata.main.temp-273.15);
+          document.getElementById("nowWind").innerHTML = rawdata.wind.speed;
+          document.getElementById("nowHum").innerHTML = rawdata.main.humidity;
+          document.getElementById("nowPress").innerHTML = rawdata.main.pressure;
+        }
+        main();
 
-    };
-    var target = document.getElementById('gauge1'); // your canvas element
-    var gauge = new Gauge(target).setOptions(opts); // create sexy gauge!
-    gauge.maxValue = 3000; // set max gauge value
-    gauge.setMinValue(0); // Prefer setter over gauge.minValue = 0
-    gauge.animationSpeed = 128; // set animation speed (32 is default value)
-    gauge.set(1500); // set actual value
+        let ctx1 = document.getElementById('daily');
+        let ctx2 = document.getElementById('hourly');
+
+        let data = {
+          datasets: [{
+              backgroundColor: '#ffca28',
+              borderColor: '#ffca28',
+              borderWidth: 4,
+              fill: false,
+              pointRadius: 2,
+              pointRadiusHover: 1,
+              pointBorderWidth: 2
+            },
+            {
+              backgroundColor: 'rgb(51, 35, 99)',
+              borderColor: 'rgb(51, 35, 99)',
+              borderWidth: 4,
+              fill: false,
+              pointRadius: 2,
+              pointRadiusHover: 1,
+              pointBorderWidth: 2
+            }
+          ]
+        };
+
+        let options = {
+          responsive: true,
+          legend: {
+            display: false
+          },
+          tooltips: {
+            mode: 'index',
+            intersect: true,
+          },
+          scales: {
+            xAxes: [{
+              display: true,
+              scaleLabel: {
+                display: false,
+                labelString: ''
+              }
+            }],
+            yAxes: [{
+              ticks: {
+                callback: function (value, index, values) {
+                  return value + "°"
+                }
+              },
+              display: true,
+              scaleLabel: {
+                display: false
+              }
+            }]
+          }
+        };
+
+        function renderChart() {
+          data.labels = ['today', 'sunday', 'monday', 'tuesday', 'friday'];
+          data.datasets[0].data = [14, 15, 12, 8, 10];
+          data.datasets[1].data = [10, 11, 9, 7, 9];
+
+          let daily = new Chart(ctx1, {
+            type: 'line',
+            data: data,
+            options: options
+          });
+
+          let hourly = new Chart(ctx2, {
+            type: 'line',
+            data: data,
+            options: options
+          });
+        }
+        renderChart();
+
+        var opts = {
+          angle: 0, // The span of the gauge arc
+          lineWidth: 0.05, // The line thickness
+          radiusScale: 1, // Relative radius
+          pointer: {
+            length: 0, // // Relative to gauge radius
+            strokeWidth: 0, // The thickness
+            color: '#000000' // Fill color
+          },
+          limitMax: false, // If false, max value increases automatically if value > maxValue
+          limitMin: false, // If true, the min value of the gauge will be fixed
+          colorStart: '#6FADCF', // Colors
+          colorStop: '#ffca28', // just experiment with them
+          strokeColor: '#E0E0E0', // to see which ones work best for you
+          generateGradient: true,
+          highDpiSupport: true, // High resolution support
+
+        };
+        var target = document.getElementById('gauge1'); // your canvas element
+        var gauge = new Gauge(target).setOptions(opts); // create sexy gauge!
+        gauge.maxValue = 3000; // set max gauge value
+        gauge.setMinValue(0); // Prefer setter over gauge.minValue = 0
+        gauge.animationSpeed = 128; // set animation speed (32 is default value)
+        gauge.set(1500); // set actual value
   </script>
 
 
