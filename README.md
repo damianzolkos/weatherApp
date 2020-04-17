@@ -6,5 +6,5 @@ WORK IN PROGRESS
 
 try it here: https://damianzolkos.github.io/weatherApp/
 
-![Image1](Screenshot1.png)
-![Image2](Screenshot2.png)
+![Image1](Screenshot1.jpg)
+![Image2](Screenshot2.jpg)
