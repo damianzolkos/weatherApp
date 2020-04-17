@@ -110,116 +110,172 @@
     }
 
     async function main() {
-        let rawdata = await getData("https://api.openweathermap.org/data/2.5/weather?q=Rzesz%C3%B3w&appid=b15be82a62ee5afa91f155ff6c086374");
-          console.log(rawdata);
-          document.getElementById("nowTemp").innerHTML = Math.round(rawdata.main.temp-273.15);
-          document.getElementById("nowFeelsLike").innerHTML = Math.round(rawdata.main.feels_like-273.15);
-          document.getElementById("nowWeather").innerHTML = rawdata.weather[0].main;
-          document.getElementById("nowWind").innerHTML = rawdata.wind.speed;
-          document.getElementById("nowHum").innerHTML = rawdata.main.humidity;
-          document.getElementById("nowPress").innerHTML = rawdata.main.pressure;
+      let rawdata = await getData(
+        "https://api.openweathermap.org/data/2.5/weather?q=Rzesz%C3%B3w&appid=b15be82a62ee5afa91f155ff6c086374");
+      // console.log(rawdata);
+      let haurlydata = await getData("hourly.json");
+      // console.log(haurlydata);
+      document.getElementById("nowTemp").innerHTML = Math.round(rawdata.main.temp - 273.15);
+      document.getElementById("nowFeelsLike").innerHTML = Math.round(rawdata.main.feels_like - 273.15);
+      document.getElementById("nowWeather").innerHTML = rawdata.weather[0].main;
+      document.getElementById("nowWind").innerHTML = rawdata.wind.speed;
+      document.getElementById("nowHum").innerHTML = rawdata.main.humidity;
+      document.getElementById("nowPress").innerHTML = rawdata.main.pressure;
+
+      var target = document.getElementById('gauge1'); // your canvas element
+      var gauge = new Gauge(target).setOptions(opts); // create sexy gauge!
+      gauge.maxValue = rawdata.sys.sunset; // set max gauge value
+      gauge.setMinValue(rawdata.sys.sunrise); // Prefer setter over gauge.minValue = 0
+      gauge.animationSpeed = 16; // set animation speed (32 is default value)
+      gauge.set(Date.now() / 1000 | 0); // set actual value
+    }
+    main();
+
+    let ctx1 = document.getElementById('daily');
+    let ctx2 = document.getElementById('hourly');
+
+    let data1 = {
+      datasets: [{
+          backgroundColor: '#ffca28',
+          borderColor: '#ffca28',
+          borderWidth: 4,
+          fill: false,
+          pointRadius: 2,
+          pointRadiusHover: 1,
+          pointBorderWidth: 2
+        },
+        {
+          backgroundColor: 'rgb(51, 35, 99)',
+          borderColor: 'rgb(51, 35, 99)',
+          borderWidth: 4,
+          fill: false,
+          pointRadius: 2,
+          pointRadiusHover: 1,
+          pointBorderWidth: 2
         }
-        main();
+      ]
+    };
 
-        let ctx1 = document.getElementById('daily');
-        let ctx2 = document.getElementById('hourly');
+    let data2 = {
+      datasets: [{
+          backgroundColor: '#ffca28',
+          borderColor: '#ffca28',
+          borderWidth: 4,
+          fill: false,
+          pointRadius: 2,
+          pointRadiusHover: 1,
+          pointBorderWidth: 2
+        },
+        {
+          backgroundColor: 'rgb(51, 35, 99)',
+          borderColor: 'rgb(51, 35, 99)',
+          borderWidth: 4,
+          fill: false,
+          pointRadius: 2,
+          pointRadiusHover: 1,
+          pointBorderWidth: 2
+        }
+      ]
+    };
 
-        let data = {
-          datasets: [{
-              backgroundColor: '#ffca28',
-              borderColor: '#ffca28',
-              borderWidth: 4,
-              fill: false,
-              pointRadius: 2,
-              pointRadiusHover: 1,
-              pointBorderWidth: 2
-            },
-            {
-              backgroundColor: 'rgb(51, 35, 99)',
-              borderColor: 'rgb(51, 35, 99)',
-              borderWidth: 4,
-              fill: false,
-              pointRadius: 2,
-              pointRadiusHover: 1,
-              pointBorderWidth: 2
-            }
-          ]
-        };
-
-        let options = {
-          responsive: true,
-          legend: {
-            display: false
-          },
-          tooltips: {
-            mode: 'index',
-            intersect: true,
-          },
-          scales: {
-            xAxes: [{
-              display: true,
-              scaleLabel: {
-                display: false,
-                labelString: ''
-              }
-            }],
-            yAxes: [{
-              ticks: {
-                callback: function (value, index, values) {
-                  return value + "°"
-                }
-              },
-              display: true,
-              scaleLabel: {
-                display: false
-              }
-            }]
+    let options = {
+      responsive: true,
+      legend: {
+        display: false
+      },
+      tooltips: {
+        mode: 'index',
+        intersect: true,
+      },
+      scales: {
+        xAxes: [{
+          display: true,
+          scaleLabel: {
+            display: false,
+            labelString: ''
           }
-        };
-
-        function renderChart() {
-          data.labels = ['today', 'sunday', 'monday', 'tuesday', 'friday'];
-          data.datasets[0].data = [14, 15, 12, 8, 10];
-          data.datasets[1].data = [10, 11, 9, 7, 9];
-
-          let daily = new Chart(ctx1, {
-            type: 'line',
-            data: data,
-            options: options
-          });
-
-          let hourly = new Chart(ctx2, {
-            type: 'line',
-            data: data,
-            options: options
-          });
-        }
-        renderChart();
-
-        var opts = {
-          angle: 0, // The span of the gauge arc
-          lineWidth: 0.05, // The line thickness
-          radiusScale: 1, // Relative radius
-          pointer: {
-            length: 0, // // Relative to gauge radius
-            strokeWidth: 0, // The thickness
-            color: '#000000' // Fill color
+        }],
+        yAxes: [{
+          ticks: {
+            callback: function (value, index, values) {
+              return value + "°"
+            }
           },
-          limitMax: false, // If false, max value increases automatically if value > maxValue
-          limitMin: false, // If true, the min value of the gauge will be fixed
-          colorStart: '#6FADCF', // Colors
-          colorStop: '#ffca28', // just experiment with them
-          strokeColor: '#E0E0E0', // to see which ones work best for you
-          generateGradient: true,
-          highDpiSupport: true, // High resolution support
+          display: true,
+          scaleLabel: {
+            display: false
+          }
+        }]
+      }
+    };
 
-        };
-        var target = document.getElementById('gauge1'); // your canvas element
-        var gauge = new Gauge(target).setOptions(opts); // create sexy gauge!
-        gauge.maxValue = 3000; // set max gauge value
-        gauge.setMinValue(0); // Prefer setter over gauge.minValue = 0
-        gauge.animationSpeed = 128; // set animation speed (32 is default value)
-        gauge.set(1500); // set actual value
+    function printDay(timestamp) {
+      var days = ['Sun', 'Mon', 'Tues', 'Wed', 'Thu', 'Fri', 'Sat'];
+      var dayOfWeek = days[new Date(timestamp * 1000).getDay()];
+      return dayOfWeek;
+    }
+
+    function printTime(timestamp) {
+      var h = new Date(timestamp).getHours();
+      var m = new Date(timestamp).getMinutes();
+      h = (h < 10) ? '0' + h : h;
+      m = (m < 10) ? '0' + m : m;
+      var output = h + ':' + m;
+    }
+
+    async function renderChart() {
+      data1.labels = [];
+      data1.datasets[0].data = [];
+      data1.datasets[1].data = [];
+
+      let dailydata = await getData("daily.json");
+      for (let i = 0; i < 7; i++) {
+        data1.labels[i] = printDay(dailydata.data[i].dt);
+        data1.datasets[0].data[i] = Math.floor(dailydata.data[i].temp.day - 273.15);
+        data1.datasets[1].data[i] = Math.floor(dailydata.data[i].temp.night - 273.15);
+      }
+
+      data2.labels = [];
+      data2.datasets[0].data = [];
+
+      let hourlydata = await getData("hourly.json");
+      for (let i = 0; i < 14; i++) {
+        data2.labels[i] = new Date(hourlydata.data[i].dt).toTimeString().slice(0, 5);
+        data2.datasets[0].data[i] = Math.floor(hourlydata.data[i].main.temp - 273.15);
+      }
+      console.log()
+
+      let daily = new Chart(ctx1, {
+        type: 'line',
+        data: data1,
+        options: options
+      });
+
+      let hourly = new Chart(ctx2, {
+        type: 'line',
+        data: data2,
+        options: options
+      });
+    }
+    renderChart();
+
+    var opts = {
+      angle: 0, // The span of the gauge arc
+      lineWidth: 0.05, // The line thickness
+      radiusScale: 1, // Relative radius
+      pointer: {
+        length: 0, // // Relative to gauge radius
+        strokeWidth: 0, // The thickness
+        color: '#000000' // Fill color
+      },
+      limitMax: false, // If false, max value increases automatically if value > maxValue
+      limitMin: false, // If true, the min value of the gauge will be fixed
+      colorStart: '#6FADCF', // Colors
+      colorStop: '#ffca28', // just experiment with them
+      strokeColor: '#E0E0E0', // to see which ones work best for you
+      generateGradient: true,
+      highDpiSupport: true, // High resolution support
+    };
   </script>
 
 
